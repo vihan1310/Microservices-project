@@ -1,0 +1,45 @@
+server:
+  port: 8084
+  
+  
+spring:
+  config:
+    import: configserver:http://localhost:8085
+  application:
+    name: API-GATEWAY
+    
+  cloud:
+    gateway:
+      mvc:
+        routes:
+        - id: USER-SERVICE
+          uri:
+            lb://USER-SERVICE          #we have user load balace so directly can pass url.
+          predicates:
+          - Path=/users/**
+          
+          
+        - id: HOTEL-SERVICE
+          uri:
+            lb://HOTEL-SERVICE         
+          predicates:
+          - Path=/hotels/** 
+          
+        - id: RATING-SERVICE
+          uri:
+            lb://RATING-SERVICE          
+          predicates:
+          - Path=/ratings/**     #suppose if we have 2 contorller in rating and to access both using apigateway,
+                                # then in -Path we can pass both the url.EX: -Path=/ratings/** , /anyothrrurl/**
+          
+
+           
+#eureka:
+#  client:
+#    fetch-registry: true
+#    register-with-eureka: true
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka     
+#  instance:
+#    prefer-ip-address: true      
+#  
